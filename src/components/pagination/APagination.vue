@@ -20,14 +20,17 @@
       ≫
     </button>
   </div>
+  <!-- pageCount, currentPage를 props로 전달 -->
+  <InputNumber :pageCount="pageCount" :currentPage="currentPage"></InputNumber>
 </template>
 
 <script setup lang="ts">
+import InputNumber from "./InputNumber.vue";
 import { ref } from "vue";
 
-const currentPage = ref<number>(1); //현재 페이지 번호 추적
+const currentPage = ref<number>(); //현재 페이지 번호 추적
 const pageSize: number = 10; //페이지당 아이템 수
-const totalItems: number = 100; //전체 아이템 수
+const totalItems: number = 200; //전체 아이템 수
 const pageCount: number = Math.ceil(totalItems / pageSize); //전체 페이지 수를 계산하는데 사용
 
 function gotoPage(pageNumber: number) {
