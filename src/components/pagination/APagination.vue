@@ -21,7 +21,8 @@
     </button>
   </div>
   <!-- pageCount, currentPage를 props로 전달 -->
-  <InputNumber :pageCount="pageCount" :currentPage="currentPage"></InputNumber>
+  <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber>
+  <!-- :currentPage="currentPage" -->
 </template>
 
 <script setup lang="ts">
@@ -51,6 +52,9 @@ function leftEndPage(): void {
 function rightEndPage(): void {
   currentPage.value = pageCount;
 }
+
+// const props = defineProps<{ items: CheckData[]; modelValue: number }>();
+// const { items, modelValue } = toRefs(props);
 </script>
 
 <style scoped>
