@@ -4,7 +4,7 @@
     <button @click="incrementPage" :disabled="currentPage === 1">＜</button>
     <ul>
       <li
-        v-for="pageNumber in pageCount"
+        v-for="(pageNumber, index) in pageCount"
         :key="pageNumber"
         :class="{ active: pageNumber === currentPage }"
       >
@@ -12,6 +12,7 @@
           {{ pageNumber }}
         </a>
       </li>
+      <span>...</span>
     </ul>
     <button @click="decrementPage" :disabled="currentPage === pageCount">
       ＞
@@ -22,17 +23,38 @@
   </div>
   <!-- pageCount, currentPage를 props로 전달 -->
   <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber>
-  <!-- :currentPage="currentPage" -->
 </template>
 
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
+
+const props = withDefault(
+  defineProps<{ total: number; showLength?: number; modelValue?: number }>(),
+  {
+    showLength: 10,
+    modelValue: 0,
+  }
+);
 
 const currentPage = ref<number>(); //현재 페이지 번호 추적
-const pageSize: number = 10; //페이지당 아이템 수
-const totalItems: number = 200; //전체 아이템 수
-const pageCount: number = Math.ceil(totalItems / pageSize); //전체 페이지 수를 계산하는데 사용
+// const pageSize: number = 10; //페이지당 아이템 수
+// const totalItems: number = 200; //전체 아이템 수
+// const pageCount: number = Math.ceil(totalItems / pageSize); //전체 페이지 수를 계산하는데 사용
+const pageCount: number = 20; //전체 페이지 수를 계산하는데 사용
+
+const pages = computed(() => {
+  if (props.showLength <= props.total) {
+    return; //[1, props.showLength]
+  }
+  //1, props.total
+});
+onMounted(() => {
+  currentPage.value = props.modelValue;
+});
+watch(toRef("modelValue"), () => {
+  currentPage.value = props.modelValue;
+});
 
 function gotoPage(pageNumber: number) {
   currentPage.value = pageNumber;
@@ -52,9 +74,6 @@ function leftEndPage(): void {
 function rightEndPage(): void {
   currentPage.value = pageCount;
 }
-
-// const props = defineProps<{ items: CheckData[]; modelValue: number }>();
-// const { items, modelValue } = toRefs(props);
 </script>
 
 <style scoped>
