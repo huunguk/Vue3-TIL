@@ -68,20 +68,18 @@ const visiblePage = computed(() => {
     pages.push(pageCount);
   }
 
-  // if (currentPage.value >= 6) {
-  //   pages.unshift("...");
-  //   pages.unshift(1);
-  //   pagesToShow = 4;
-  // }
-
-  // if (pages.length >= pagesToShow) {
-  // pages.unshift("...");
-  // pages.unshift(1);
-  // }
   if (pages.length === pagesToShow) {
     pages.unshift("...");
     pages.unshift(1);
   }
+
+  // if (pages.length == 12) {
+  //   pagesToShow = 6;
+  // }
+
+  // if (pages.length == 8) {
+  //   pagesToShow = 8;
+  // }
 
   console.log("pages.length 길이 :", pages.length);
 

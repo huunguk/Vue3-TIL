@@ -31,8 +31,8 @@ const emits = defineEmits<{
 }>();
 
 function onClick(value: number) {
-  // input 태그에서 사용자가 입력한 페이지 번호를 currentPage에 반영합니다.
-  // 단, 입력한 페이지 번호가 1부터 pageCount까지의 범위에 속하는 경우에만 반영됩니다.
+  // input 태그에서 사용자가 입력한 페이지 번호를 currentPage에 반영.
+  // 단, 입력한 페이지 번호가 1부터 pageCount까지의 범위에 속하는 경우에만 반영.
   if (ChangeNumber.value >= 1 && ChangeNumber.value <= props.pageCount) {
     emits("update:modelValue", value);
     ChangeNumber.value = "";
