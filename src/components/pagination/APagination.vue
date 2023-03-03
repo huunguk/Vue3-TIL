@@ -58,27 +58,19 @@ const visiblePage = computed(() => {
     pages.push(i);
   }
 
-  // if (startPage > 1) {
-  //   pages.unshift("...");
-  //   pages.unshift(1);
-  // }
+  if (startPage > 1) {
+    pages.unshift("...");
+    pages.unshift(1);
+  }
 
   if (endPage < pageCount) {
     pages.push("...");
     pages.push(pageCount);
   }
 
-  if (pages.length === pagesToShow) {
-    pages.unshift("...");
-    pages.unshift(1);
-  }
-
-  // if (pages.length == 12) {
-  //   pagesToShow = 6;
-  // }
-
-  // if (pages.length == 8) {
-  //   pagesToShow = 8;
+  // if (pages.length === pagesToShow) {
+  //   pages.unshift("...");
+  //   pages.unshift(1);
   // }
 
   console.log("pages.length 길이 :", pages.length);
