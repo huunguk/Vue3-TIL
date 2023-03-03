@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import APagination from "./components/pagination/APagination.vue";
-import APaginations from "./components/pagination/APaginations.vue";
+import InputNumber from "./components/pagination/InputNumber.vue";
 </script>
 
 <template>
-  <APagination />
+  <APagination :show-length="8" :total="20" />
+  <InputNumber />
 </template>
 
 <style scoped></style>

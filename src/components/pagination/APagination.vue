@@ -1,7 +1,7 @@
 <template>
   <div class="pagination">
     <button @click="leftEndPage" :disabled="currentPage === 1">«</button>
-    <button @click="incrementPage" :disabled="currentPage === 1">◁</button>
+    <button @click="decrementPage" :disabled="currentPage === 1">◁</button>
     <ul>
       <li
         v-for="(pageNumber, index) in visiblePage"
@@ -18,28 +18,29 @@
         <span v-else>...</span>
       </li>
     </ul>
-    <button @click="decrementPage" :disabled="currentPage === pageCount">
+    <button @click="incrementPage" :disabled="currentPage === pageCount">
       ▷
     </button>
     <button @click="rightEndPage" :disabled="currentPage === pageCount">
       »
     </button>
   </div>
-  <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber>
+  <!-- <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber> -->
 </template>
-
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
 import { ref, toRef, computed } from "vue";
 
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
 const pageCount: number = 20; //전체 페이지 수
+let pagesToShow: number = 8; //페이지네이션 길이
+
+let props = defineProps<{ total: number; showLength: number }>();
 
 const visiblePage = computed(() => {
-  const pagesToShow: number = 5;
   const pageToShowHalf: number = Math.floor(pagesToShow / 2);
   let startPage: number = currentPage.value - pageToShowHalf;
-  let endPage: number = currentPage.value + pageToShowHalf;
+  let endPage: number = currentPage.value + pageToShowHalf - 1;
 
   if (startPage < 1) {
     startPage = 1;
@@ -57,37 +58,52 @@ const visiblePage = computed(() => {
     pages.push(i);
   }
 
-  if (startPage > 1) {
-    pages.unshift("...");
-    pages.unshift(1);
-  }
-  // else if (endPage < pageCount) {
-  //   pages.push("...");
-  //   pages.push(pageCount);
+  // if (startPage > 1) {
+  //   pages.unshift("...");
+  //   pages.unshift(1);
   // }
+
   if (endPage < pageCount) {
     pages.push("...");
     pages.push(pageCount);
   }
+
+  // if (currentPage.value >= 6) {
+  //   pages.unshift("...");
+  //   pages.unshift(1);
+  //   pagesToShow = 4;
+  // }
+
+  // if (pages.length >= pagesToShow) {
+  // pages.unshift("...");
+  // pages.unshift(1);
+  // }
+  if (pages.length === pagesToShow) {
+    pages.unshift("...");
+    pages.unshift(1);
+  }
+
+  console.log("pages.length 길이 :", pages.length);
 
   return pages;
 });
 
 function gotoPage(pageNumber: number): void {
   currentPage.value = pageNumber;
-  // 페이지 번호를 변경하면 필요한 작업을 수행.
-  // ex.API를 호출하여 새로운 데이터를 가져올 수 있습니다.
 }
 
 function decrementPage(): void {
-  currentPage.value < pageCount && currentPage.value++;
-}
-function incrementPage(): void {
   currentPage.value > 1 && currentPage.value--;
 }
+
+function incrementPage(): void {
+  currentPage.value < pageCount && currentPage.value++;
+}
+
 function leftEndPage(): void {
   currentPage.value = 1;
 }
+
 function rightEndPage(): void {
   currentPage.value = pageCount;
 }
@@ -124,14 +140,14 @@ function rightEndPage(): void {
 }
 
 .pagination li {
-  width: 50px;
+  width: 40px;
   text-align: center;
   margin: 0 5px;
+  font-weight: bold;
 }
 .pagination li a {
   display: block;
-  weight: 50px;
-
+  weight: 40px;
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
@@ -146,6 +162,7 @@ function rightEndPage(): void {
 }
 
 .pagination span {
+  weight: 40px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <!-- <div>
+    <hr />
+
     <p>
       현재 페이지 번호 : {{ modelValue }} /
       <span>전체 페이지 수 : {{ pageCount }}</span>
     </p>
-  </div>
+  </div> -->
   <hr />
   <label>
     원하시는 페이지 번호를 입력하세요 :
