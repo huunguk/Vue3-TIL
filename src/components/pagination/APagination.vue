@@ -1,62 +1,79 @@
 <template>
   <div class="pagination">
-    <button @click="leftEndPage" :disabled="currentPage === 1">≪</button>
-    <button @click="incrementPage" :disabled="currentPage === 1">＜</button>
+    <button @click="leftEndPage" :disabled="currentPage === 1">«</button>
+    <button @click="incrementPage" :disabled="currentPage === 1">◁</button>
     <ul>
       <li
-        v-for="(pageNumber, index) in pageCount"
+        v-for="(pageNumber, index) in visiblePage"
         :key="pageNumber"
         :class="{ active: pageNumber === currentPage }"
       >
-        <a href="#" @click.prevent="gotoPage(pageNumber)">
+        <a
+          v-if="pageNumber !== '...'"
+          href="#"
+          @click.prevent="gotoPage(pageNumber)"
+        >
           {{ pageNumber }}
         </a>
+        <span v-else>...</span>
       </li>
-      <span>...</span>
     </ul>
     <button @click="decrementPage" :disabled="currentPage === pageCount">
-      ＞
+      ▷
     </button>
     <button @click="rightEndPage" :disabled="currentPage === pageCount">
-      ≫
+      »
     </button>
   </div>
-  <!-- pageCount, currentPage를 props로 전달 -->
   <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber>
 </template>
 
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
-import { ref, computed } from "vue";
+import { ref, toRef, computed } from "vue";
 
-const props = withDefault(
-  defineProps<{ total: number; showLength?: number; modelValue?: number }>(),
-  {
-    showLength: 10,
-    modelValue: 0,
+const currentPage = ref<number>(1); //현재 페이지 번호 추적
+const pageCount: number = 20; //전체 페이지 수
+
+const visiblePage = computed(() => {
+  const pagesToShow: number = 5;
+  const pageToShowHalf: number = Math.floor(pagesToShow / 2);
+  let startPage: number = currentPage.value - pageToShowHalf;
+  let endPage: number = currentPage.value + pageToShowHalf;
+
+  if (startPage < 1) {
+    startPage = 1;
+    endPage = pagesToShow;
   }
-);
 
-const currentPage = ref<number>(); //현재 페이지 번호 추적
-// const pageSize: number = 10; //페이지당 아이템 수
-// const totalItems: number = 200; //전체 아이템 수
-// const pageCount: number = Math.ceil(totalItems / pageSize); //전체 페이지 수를 계산하는데 사용
-const pageCount: number = 20; //전체 페이지 수를 계산하는데 사용
-
-const pages = computed(() => {
-  if (props.showLength <= props.total) {
-    return; //[1, props.showLength]
+  if (endPage > pageCount) {
+    endPage = pageCount;
+    startPage = endPage - pagesToShow + 1;
   }
-  //1, props.total
-});
-onMounted(() => {
-  currentPage.value = props.modelValue;
-});
-watch(toRef("modelValue"), () => {
-  currentPage.value = props.modelValue;
+
+  const pages: (number | string)[] = [];
+
+  for (let i: number = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+
+  if (startPage > 1) {
+    pages.unshift("...");
+    pages.unshift(1);
+  }
+  // else if (endPage < pageCount) {
+  //   pages.push("...");
+  //   pages.push(pageCount);
+  // }
+  if (endPage < pageCount) {
+    pages.push("...");
+    pages.push(pageCount);
+  }
+
+  return pages;
 });
 
-function gotoPage(pageNumber: number) {
+function gotoPage(pageNumber: number): void {
   currentPage.value = pageNumber;
   // 페이지 번호를 변경하면 필요한 작업을 수행.
   // ex.API를 호출하여 새로운 데이터를 가져올 수 있습니다.
@@ -81,15 +98,23 @@ function rightEndPage(): void {
   list-style: none;
   padding: 0;
 }
+
 .pagination {
   display: flex;
-  align-items: center;
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
 }
 
 .pagination button {
-  width: 30px;
-  height: 30px;
-  margin: 5px;
+  font-size: 16px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: inherit;
+  padding: 0px 15px;
+  cursor: pointer;
 }
 
 .pagination ul {
@@ -97,16 +122,32 @@ function rightEndPage(): void {
   align-items: center;
   justify-content: center;
 }
+
 .pagination li {
   width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  margin: 0 5px;
+}
+.pagination li a {
+  display: block;
+  weight: 50px;
+
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
 }
 
 .pagination li.active a {
-  font-weight: bold;
-  color: red;
+  font-weight: 700;
+  border: 1px solid #ccc;
+  background-color: #d6e8fe;
+}
+
+.pagination span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

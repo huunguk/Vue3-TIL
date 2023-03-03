@@ -41,7 +41,7 @@ import { ref, computed } from "vue";
 
 const currentPage = ref<number>(1); // 현재 페이지
 const itemsPerPage = ref<number>(5); // 페이지당 아이템 개수
-const items = ref<number[]>([...Array(50).keys()].map((i) => i + 1)); // 전체 아이템 리스트
+const items = ref<number>([...Array(50).keys()].map((i) => i + 1)); // 전체 아이템 리스트
 
 // 전체 페이지 수를 계산함
 const pageCount = computed(() => {
@@ -84,7 +84,6 @@ const paginatedItems = computed(() => {
   return items.value.slice(startIndex, endIndex);
 });
 
-// 이전, 다음, 첫, 마지막 페이지로 이동하는 함수
 function setCurrentPage(page: number): void {
   currentPage.value = page;
 }
