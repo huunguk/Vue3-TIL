@@ -15,21 +15,20 @@ const props = defineProps<{
   modelValue: number;
 }>();
 
-const ChangeNumber = ref<number>();
+const ChangeNumber = ref<number>(1);
 
 const emits = defineEmits<{
   (e: "update:modelValue", value: number): void;
 }>();
 
-console.log(ChangeNumber.value);
-
 function onClick(value: number) {
   // input 태그에서 사용자가 입력한 페이지 번호를 currentPage에 반영.
   // 단, 입력한 페이지 번호가 1부터 pageCount까지의 범위에 속하는 경우에만 반영.
-  if (ChangeNumber.value >= 1 && ChangeNumber.value <= props.pageCount) {
+  if (ChangeNumber.value >= 1 || ChangeNumber.value <= 20) {
     emits("update:modelValue", value);
     ChangeNumber.value = "";
   } else {
+    alert("no");
     ChangeNumber.value = "";
   }
 }

@@ -11,7 +11,7 @@
         <a
           v-if="pageNumber !== '...'"
           href="#"
-          @click.prevent="gotoPage(pageNumber), $emit('currentPage')"
+          @click.prevent="gotoPage(pageNumber)"
         >
           {{ pageNumber }}
         </a>
@@ -28,14 +28,21 @@
 </template>
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
-import { ref, toRef, computed, watch } from "vue";
-
+import { ref, toRefs, computed, watch } from "vue";
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
 const pageCount: number = 20; //전체 페이지 수
 let pagesToShow: number = 8; //페이지네이션 길이
 
+const { modelValue } = toRefs(props);
+console.log(props.modelValue);
+console.log(modelValue.value);
+
+const props = defineProps<{
+  modelValue: number;
+}>();
+
 const emits = defineEmits<{
-  "update:currentPage": (value: number) => void;
+  (e: "update:currentPage", value: number): void;
 }>();
 
 const visiblePage = computed(() => {
@@ -43,7 +50,7 @@ const visiblePage = computed(() => {
   let startPage: number = currentPage.value - pageToShowHalf + 1;
   let endPage: number = currentPage.value + pageToShowHalf;
 
-  if (startPage < 1) {
+  if (startPage <= 5) {
     startPage = 1;
     endPage = pagesToShow;
   }
@@ -53,7 +60,7 @@ const visiblePage = computed(() => {
     startPage = endPage - pagesToShow + 1;
   }
 
-  const pages: (number | string)[] = [];
+  const pages: string[] = [];
 
   for (let i: number = startPage; i <= endPage; i++) {
     pages.push(i);
@@ -81,6 +88,10 @@ const visiblePage = computed(() => {
 
 watch(currentPage, (_) => {
   emits("update:currentPage", currentPage.value);
+});
+
+watch(modelValue, () => {
+  currentPage.value = modelValue.value;
 });
 
 function gotoPage(pageNumber: number): void {
