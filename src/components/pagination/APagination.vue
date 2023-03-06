@@ -11,7 +11,7 @@
         <a
           v-if="pageNumber !== '...'"
           href="#"
-          @click.prevent="gotoPage(pageNumber)"
+          @click.prevent="gotoPage(pageNumber), $emit('currentPage')"
         >
           {{ pageNumber }}
         </a>
@@ -25,22 +25,23 @@
       »
     </button>
   </div>
-  <!-- <InputNumber :pageCount="pageCount" v-model="currentPage"></InputNumber> -->
 </template>
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
-import { ref, toRef, computed } from "vue";
+import { ref, toRef, computed, watch } from "vue";
 
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
 const pageCount: number = 20; //전체 페이지 수
 let pagesToShow: number = 8; //페이지네이션 길이
 
-let props = defineProps<{ total: number; showLength: number }>();
+const emits = defineEmits<{
+  "update:currentPage": (value: number) => void;
+}>();
 
 const visiblePage = computed(() => {
   const pageToShowHalf: number = Math.floor(pagesToShow / 2);
-  let startPage: number = currentPage.value - pageToShowHalf;
-  let endPage: number = currentPage.value + pageToShowHalf - 1;
+  let startPage: number = currentPage.value - pageToShowHalf + 1;
+  let endPage: number = currentPage.value + pageToShowHalf;
 
   if (startPage < 1) {
     startPage = 1;
@@ -61,21 +62,25 @@ const visiblePage = computed(() => {
   if (startPage > 1) {
     pages.unshift("...");
     pages.unshift(1);
+    pages.pop();
+    pages.pop();
+  } else if (startPage < 1) {
+    pages.unshift(1);
   }
 
   if (endPage < pageCount) {
     pages.push("...");
     pages.push(pageCount);
+  } else if (endPage >= pageCount) {
+    pages.push(pageCount - 1);
+    pages.push(pageCount);
   }
 
-  // if (pages.length === pagesToShow) {
-  //   pages.unshift("...");
-  //   pages.unshift(1);
-  // }
-
-  console.log("pages.length 길이 :", pages.length);
-
   return pages;
+});
+
+watch(currentPage, (_) => {
+  emits("update:currentPage", currentPage.value);
 });
 
 function gotoPage(pageNumber: number): void {

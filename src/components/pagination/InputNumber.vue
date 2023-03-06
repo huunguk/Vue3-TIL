@@ -1,12 +1,4 @@
 <template>
-  <!-- <div>
-    <hr />
-
-    <p>
-      현재 페이지 번호 : {{ modelValue }} /
-      <span>전체 페이지 수 : {{ pageCount }}</span>
-    </p>
-  </div> -->
   <hr />
   <label>
     원하시는 페이지 번호를 입력하세요 :
@@ -16,19 +8,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
-const { pageCount, modelValue } = toRefs(props);
-
-const ChangeNumber = ref<number>();
+import { ref, toRef } from "vue";
+const { modelValue } = toRef(props);
 
 const props = defineProps<{
   modelValue: number;
-  pageCount: number;
 }>();
+
+const ChangeNumber = ref<number>();
 
 const emits = defineEmits<{
   (e: "update:modelValue", value: number): void;
 }>();
+
+console.log(ChangeNumber.value);
 
 function onClick(value: number) {
   // input 태그에서 사용자가 입력한 페이지 번호를 currentPage에 반영.
@@ -37,7 +30,6 @@ function onClick(value: number) {
     emits("update:modelValue", value);
     ChangeNumber.value = "";
   } else {
-    alert("페이지 수를 초과했습니다.");
     ChangeNumber.value = "";
   }
 }
