@@ -1,24 +1,44 @@
 <script setup lang="ts">
 import APagination from "./components/pagination/APagination.vue";
 import InputNumber from "./components/pagination/InputNumber.vue";
+import APagesToShow from "./components/pagination/APagesToShow.vue";
+import APageCount from "./components/pagination/APageCount.vue";
 
 import { ref } from "vue";
 
-const currentPage = ref(1);
+const currentPage = ref<number>(1);
+const pagesToShow = ref<number>(1);
+const pageCount = ref<number>(1);
 
 function onCurrentPageUpdated(value: number) {
   currentPage.value = value;
+}
+
+function onPagesToShowUpdated(value: number) {
+  pagesToShow.value = value;
+}
+function onPageCountUpdated(value: number) {
+  pageCount.value = value;
 }
 </script>
 
 <template>
   <APagination
     @update:currentPage="onCurrentPageUpdated"
+    @update:pagesToShow="onPagesToShowUpdated"
+    @update:pageCount="onPageCountUpdated"
     v-model="currentPage"
+    :pageShowValue="pagesToShow"
+    :pageCountValue="pageCount"
   />
   <hr />
-  <div>현재페이지 {{ currentPage }}</div>
-  <InputNumber v-model="currentPage" />
+  <InputNumber v-model.number="currentPage" />
+  <hr />
+  {{ pagesToShow }}
+  <APagesToShow v-model.number="pagesToShow" />
+  <hr />
+  {{ pageCount }}
+  <APageCount v-model="pageCount" />
 </template>
 
 <style scoped></style>

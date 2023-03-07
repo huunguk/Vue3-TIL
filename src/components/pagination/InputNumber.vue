@@ -1,5 +1,4 @@
 <template>
-  <hr />
   <label>
     원하시는 페이지 번호를 입력하세요 :
     <input type="number" v-model="ChangeNumber" />
@@ -8,14 +7,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from "vue";
-const { modelValue } = toRef(props);
+import { ref, toRefs } from "vue";
+const { modelValue } = toRefs(props);
 
 const props = defineProps<{
   modelValue: number;
 }>();
 
-const ChangeNumber = ref<number>(1);
+const ChangeNumber = ref<number>();
 
 const emits = defineEmits<{
   (e: "update:modelValue", value: number): void;

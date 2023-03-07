@@ -28,39 +28,52 @@
 </template>
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
-import { ref, toRefs, computed, watch } from "vue";
+import { ref, toRefs, computed, watch, onMounted } from "vue";
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
-const pageCount: number = 20; //전체 페이지 수
-let pagesToShow: number = 8; //페이지네이션 길이
-
-const { modelValue } = toRefs(props);
-console.log(props.modelValue);
-console.log(modelValue.value);
+const pageCount = ref<number>(20); //전체 페이지 수
+const pagesToShow = ref<number>(8); //페이지네이션 길이
 
 const props = defineProps<{
   modelValue: number;
+  pageShowValue: number;
+  pageCountValue: number;
 }>();
+
+const { modelValue, pageShowValue, pageCountValue } = toRefs(props);
 
 const emits = defineEmits<{
   (e: "update:currentPage", value: number): void;
+  (e: "update:pagesToShow", value: number): void;
+  (e: "update:pageCount", value: number): void;
 }>();
 
 const visiblePage = computed(() => {
-  const pageToShowHalf: number = Math.floor(pagesToShow / 2);
+  const pageToShowHalf: number = Math.floor(pagesToShow.value / 2);
   let startPage: number = currentPage.value - pageToShowHalf + 1;
   let endPage: number = currentPage.value + pageToShowHalf;
+  const pages: string[] = [];
+  let startArea = pagesToShow.value - 2; // ..., 1
+
+  // if (currentPage.value < startArea) {
+  //   for(let i=0; i<startArea; i++) {
+  //     pages.push( (i + 1).toString())
+  //   }
+  //   pages.push('...', props.pageCountValue.toString())
+  // } else if () {
+
+  // } else {
+
+  // }
 
   if (startPage <= 5) {
     startPage = 1;
-    endPage = pagesToShow;
+    endPage = pagesToShow.value;
   }
 
-  if (endPage > pageCount) {
-    endPage = pageCount;
-    startPage = endPage - pagesToShow + 1;
+  if (endPage > pageCount.value) {
+    endPage = pageCount.value;
+    startPage = endPage - pagesToShow.value + 1;
   }
-
-  const pages: string[] = [];
 
   for (let i: number = startPage; i <= endPage; i++) {
     pages.push(i);
@@ -75,20 +88,23 @@ const visiblePage = computed(() => {
     pages.unshift(1);
   }
 
-  if (endPage < pageCount) {
+  if (endPage < pageCount.value) {
     pages.push("...");
-    pages.push(pageCount);
-  } else if (endPage >= pageCount) {
-    pages.push(pageCount - 1);
-    pages.push(pageCount);
+    pages.push(pageCount.value);
+  } else if (endPage >= pageCount.value) {
+    pages.push(pageCount.value - 1);
+    pages.push(pageCount.value);
   }
 
   return pages;
 });
 
-watch(currentPage, (_) => {
-  emits("update:currentPage", currentPage.value);
-});
+onMounted(() => {
+  emits("update:pagesToShow", pagesToShow.value);
+}),
+  watch(currentPage, (_) => {
+    emits("update:currentPage", currentPage.value);
+  });
 
 watch(modelValue, () => {
   currentPage.value = modelValue.value;
@@ -103,7 +119,7 @@ function decrementPage(): void {
 }
 
 function incrementPage(): void {
-  currentPage.value < pageCount && currentPage.value++;
+  currentPage.value < pageCount.value && currentPage.value++;
 }
 
 function leftEndPage(): void {
@@ -111,7 +127,7 @@ function leftEndPage(): void {
 }
 
 function rightEndPage(): void {
-  currentPage.value = pageCount;
+  currentPage.value = pageCount.value;
 }
 </script>
 
