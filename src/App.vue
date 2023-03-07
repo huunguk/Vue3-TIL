@@ -31,14 +31,14 @@ function onChangedPage(page: number) {
     @update:pagesToShow="onPagesToShowUpdated"
     @update:pageCount="onPageCountUpdated"
     @click="onChangedPage"
-    v-model="currentPage"
+    v-model.number="currentPage"
     :pageShowValue="pagesToShow"
     :pageCountValue="pageCount"
   />
   <hr />
-  <InputNumber v-model.number="currentPage" />
+  <InputNumber v-model.number="currentPage" :pageCountValue="pageCount" />
   <hr />
-  <APagesToShow v-model.number="pagesToShow" />
+  <APagesToShow v-model.number="pagesToShow" :pageCountValue="pageCount" />
   <hr />
   <APageCount v-model.number="pageCount" />
 </template>

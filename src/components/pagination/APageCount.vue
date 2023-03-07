@@ -21,8 +21,8 @@ const emit = defineEmits<{
 }>();
 
 function onClick(value: number) {
-  console.log("pageCount value", value);
   emit("update:modelValue", value);
+  PageCountValue.value = "";
 }
 </script>
 

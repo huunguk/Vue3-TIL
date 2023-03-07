@@ -10,10 +10,11 @@
 import { ref, toRefs } from "vue";
 
 const InputPageValue = ref<number>();
-const { modelValue } = toRefs(props);
+const { modelValue, pageCountValue } = toRefs(props);
 
 const props = defineProps<{
   modelValue: number;
+  pageCountValue: number;
 }>();
 
 const emits = defineEmits<{
@@ -21,8 +22,13 @@ const emits = defineEmits<{
 }>();
 
 function onClick(value: number) {
-  console.log("InputPageValue value", value);
-  emits("update:modelValue", value);
+  if (InputPageValue.value <= pageCountValue.value) {
+    emits("update:modelValue", value);
+    InputPageValue.value = "";
+  } else {
+    alert("NOPE!! APagesToShow Component!!");
+    InputPageValue.value = "";
+  }
 }
 </script>
 

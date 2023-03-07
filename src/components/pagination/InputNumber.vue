@@ -8,11 +8,14 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
-const { modelValue } = toRefs(props);
+const { modelValue, pageCountValue } = toRefs(props);
 
 const props = defineProps<{
   modelValue: number;
+  pageCountValue: number;
 }>();
+
+console.log("pageCountValue", pageCountValue.value);
 
 const ChangeNumber = ref<number>();
 
@@ -23,11 +26,11 @@ const emits = defineEmits<{
 function onClick(value: number) {
   // input 태그에서 사용자가 입력한 페이지 번호를 currentPage에 반영.
   // 단, 입력한 페이지 번호가 1부터 pageCount까지의 범위에 속하는 경우에만 반영.
-  if (ChangeNumber.value >= 1 || ChangeNumber.value <= 20) {
+  if (ChangeNumber.value <= pageCountValue.value) {
     emits("update:modelValue", value);
     ChangeNumber.value = "";
   } else {
-    alert("no");
+    alert("nope! InputNumber Component");
     ChangeNumber.value = "";
   }
 }

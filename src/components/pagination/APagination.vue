@@ -30,8 +30,8 @@
 import InputNumber from "./InputNumber.vue";
 import { ref, toRefs, computed, watch, onMounted } from "vue";
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
-const pageCount = ref<number>(200); //전체 페이지 수
-const pagesToShow = ref<number>(10); //페이지네이션 길이
+const pageCount = ref<number>(20); //전체 페이지 수
+const pagesToShow = ref<number>(8); //페이지네이션 길이
 
 const props = withDefaults(
   defineProps<{
