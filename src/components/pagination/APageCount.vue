@@ -24,8 +24,6 @@ function onClick(value: number) {
   console.log("pageCount value", value);
   emit("update:modelValue", value);
 }
-
-console.log("aa", modelValue.value);
 </script>
 
 <style scoped></style>

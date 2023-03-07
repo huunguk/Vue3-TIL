@@ -20,6 +20,9 @@ function onPagesToShowUpdated(value: number) {
 function onPageCountUpdated(value: number) {
   pageCount.value = value;
 }
+function onChangedPage(page: number) {
+  console.log(page);
+}
 </script>
 
 <template>
@@ -27,6 +30,7 @@ function onPageCountUpdated(value: number) {
     @update:currentPage="onCurrentPageUpdated"
     @update:pagesToShow="onPagesToShowUpdated"
     @update:pageCount="onPageCountUpdated"
+    @click="onChangedPage"
     v-model="currentPage"
     :pageShowValue="pagesToShow"
     :pageCountValue="pageCount"
@@ -34,11 +38,9 @@ function onPageCountUpdated(value: number) {
   <hr />
   <InputNumber v-model.number="currentPage" />
   <hr />
-  {{ pagesToShow }}
   <APagesToShow v-model.number="pagesToShow" />
   <hr />
-  {{ pageCount }}
-  <APageCount v-model="pageCount" />
+  <APageCount v-model.number="pageCount" />
 </template>
 
 <style scoped></style>
