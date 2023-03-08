@@ -4,11 +4,15 @@ import InputNumber from "./components/pagination/InputNumber.vue";
 import APagesToShow from "./components/pagination/APagesToShow.vue";
 import APageCount from "./components/pagination/APageCount.vue";
 
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 
-const currentPage = ref<number>(1);
-const pagesToShow = ref<number>(8);
-const pageCount = ref<number>(20);
+const currentPage = ref(1);
+const currentPageProp = ref(1);
+watch(currentPage, () => {
+  currentPageProp.value = currentPage.value;
+});
+const pagesToShow = ref(10);
+const pageCount = ref(20);
 
 function onCurrentPageUpdated(value: number) {
   currentPage.value = value;
@@ -23,6 +27,9 @@ function onPageCountUpdated(value: number) {
 function onChangedPage(page: number) {
   console.log(page);
 }
+watch(pageCount, () => {
+  console.log(typeof pageCount.value);
+});
 </script>
 
 <template>

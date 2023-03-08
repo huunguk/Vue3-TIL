@@ -5,8 +5,8 @@
     <ul>
       <li
         v-for="(pageNumber, index) in visiblePage"
-        :key="pageNumber"
-        :class="{ active: pageNumber === currentPage }"
+        :key="index"
+        :class="{ active: pageNumber === currentPage.toString() }"
       >
         <a
           v-if="pageNumber !== '...'"
@@ -29,13 +29,11 @@
 <script setup lang="ts">
 import InputNumber from "./InputNumber.vue";
 import { ref, toRefs, computed, watch, onMounted } from "vue";
-const currentPage = ref<number>(1); //현재 페이지 번호 추적
-// const pageCount = ref<number>(20); //전체 페이지 수
-// const pagesToShow = ref<number>(8); //페이지네이션 길이
+const currentPage = ref<number>(1);
 
 const props = withDefaults(
   defineProps<{
-    modelValue: number; //현재 페이지 번호를 받아올 prop
+    modelValue: number;
     pagesToShow?: number;
     pageCount: number;
   }>(),
@@ -45,89 +43,52 @@ const props = withDefaults(
 const { modelValue, pagesToShow, pageCount } = toRefs(props);
 
 const emits = defineEmits<{
-  (e: "update:currentPage", value: number): void; // 현재 페이지 번호 업데이트 emit
+  (e: "update:currentPage", value: number): void;
   (e: "update:pagesToShow", value: number): void;
   (e: "update:pageCount", value: number): void;
   (e: "click", value: number): void;
 }>();
 
 const visiblePage = computed(() => {
-  const pages: string[] = []; // 반환할 페이지들을 담을 배열
-  const pageToShowHalf: number = Math.floor(pagesToShow.value / 2); // 페이지네이션 길이의 반 // 4
-  let startPage: number = currentPage.value - pageToShowHalf; // 시작 페이지 // ? - 4
-  let endPage: number = currentPage.value + pageToShowHalf; // 끝 페이지 // ? + 4
-  let numberAverage: number = Math.ceil(pagesToShow.value / 2); // 페이지네이션 길이의 반을 올림 // 4
+  const pages: string[] = [];
+  let left = pagesToShow.value - 2;
+  let right = pageCount.value - left + 1;
+  let center = pagesToShow.value - 4;
 
-  // console.log("pages.length", pages.length);
-
-  // if (currentPage.value <= pagesToShow.value - 2) {
-  //   for(let i=0;i<pagesToShow.value - 2; i++) {
-  //     pages.push(i+1)
-  //   }
-  //   pages.push('...', pageCount.value.toString())
-  // } else if() {
-
-  // }
-
-  // 시작 페이지가 1 이하일 때
-  if (startPage <= numberAverage) {
-    startPage = 1;
-    endPage = pagesToShow.value;
-  }
-  // 끝 페이지가 전체 페이지 수보다 크거나 같을 때
-  else if (endPage > pageCount.value - numberAverage) {
-    endPage = pageCount.value;
-    startPage = endPage - pagesToShow.value + 1;
-  }
-  // 시작 페이지부터 끝 페이지까지 반복하면서 페이지들을 배열에 push
-  for (let i: number = startPage; i <= endPage; i++) {
-    pages.push(i);
-  }
-
-  // 시작 페이지가 1보다 크면
-  if (startPage > 1) {
-    pages.unshift("...");
-    pages.unshift(1);
-    pages.pop();
-  }
-
-  if (startPage > 1 && endPage < pageCount.value) {
-    if (pagesToShow.value % 2 === 1) {
-      pages.splice(2, 1);
-    } else {
-      pages.splice(2, 2);
+  if (currentPage.value <= left) {
+    for (let i: number = 1; i <= left; i++) {
+      pages.push(i.toString());
     }
+    pages.push("...", pageCount.value);
+  } else if (currentPage.value >= right) {
+    pages.push("1", "...");
+    for (let i: number = right; i <= pageCount.value; i++) {
+      pages.push(i.toString());
+    }
+  } else {
+    pages.push("1", "...");
+    if (pagesToShow.value % 2 === 0) {
+      for (let i = 0; i < center; i++) {
+        pages.push((currentPage.value - center / 2 + i + 1).toString());
+      }
+    } else {
+      for (let i = 0; i < center; i++) {
+        pages.push((currentPage.value - Math.floor(center / 2) + i).toString());
+      }
+    }
+    pages.push("...", pageCount.value.toString());
   }
-
-  if (endPage < pageCount.value) {
-    // 끝 페이지가 전체 페이지 수보다 작으면
-    pages.push("...");
-    pages.push(pageCount.value);
-  } else if (endPage >= pageCount.value) {
-    pages.push(pageCount.value);
-  }
-  console.log("pages.length", pages.length);
 
   return pages;
 });
 
-onMounted(() => {
-  emits("update:pagesToShow", pagesToShow.value);
-}),
-  watch(currentPage, (_) => {
-    emits("update:currentPage", currentPage.value);
-  });
+watch(currentPage, (_) => {
+  emits("update:currentPage", currentPage.value);
+});
 
 watch(modelValue, () => {
   currentPage.value = modelValue.value;
 });
-
-// watch(pagesToShow, () => {
-//   pagesToShow.value = pageShowValue.value;
-// });
-// watch(pageCountValue, () => {
-//   pageCount.value = pageCountValue.value;
-// });
 
 function gotoPage(pageNumber: number): void {
   updateValue(pageNumber);
@@ -141,20 +102,16 @@ function decrementPage(): void {
 
 function incrementPage(): void {
   if (currentPage.value < pageCount.value) {
-    // currentPage.value++;
     updateValue(currentPage.value + 1);
   }
 }
 
 function leftEndPage(): void {
-  // currentPage.value = 1;
   updateValue(1);
 }
 
 function rightEndPage(): void {
   updateValue(pageCount.value);
-  // currentPage.value = pageCount.value;
-  // emits("click", currentPage.value);
 }
 function updateValue(value: number) {
   currentPage.value = value;
