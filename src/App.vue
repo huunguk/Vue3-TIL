@@ -7,8 +7,8 @@ import APageCount from "./components/pagination/APageCount.vue";
 import { ref } from "vue";
 
 const currentPage = ref<number>(1);
-const pagesToShow = ref<number>(1);
-const pageCount = ref<number>(1);
+const pagesToShow = ref<number>(8);
+const pageCount = ref<number>(20);
 
 function onCurrentPageUpdated(value: number) {
   currentPage.value = value;
@@ -32,15 +32,15 @@ function onChangedPage(page: number) {
     @update:pageCount="onPageCountUpdated"
     @click="onChangedPage"
     v-model.number="currentPage"
-    :pageShowValue="pagesToShow"
-    :pageCountValue="pageCount"
+    :pagesToShow="pagesToShow"
+    :pageCount="pageCount"
   />
   <hr />
   <InputNumber v-model.number="currentPage" :pageCountValue="pageCount" />
   <hr />
   <APagesToShow v-model.number="pagesToShow" :pageCountValue="pageCount" />
   <hr />
-  <APageCount v-model.number="pageCount" />
+  <APageCount v-model.number="pageCount" :pageShowValue="pagesToShow" />
 </template>
 
 <style scoped></style>

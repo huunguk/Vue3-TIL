@@ -10,10 +10,11 @@
 import { ref, toRefs } from "vue";
 
 const PageCountValue = ref<number>();
-const { modelValue } = toRefs(props);
+const { modelValue, pageShowValue } = toRefs(props);
 
 const props = defineProps<{
   modelValue: number;
+  pageShowValue: number;
 }>();
 
 const emit = defineEmits<{
@@ -21,8 +22,13 @@ const emit = defineEmits<{
 }>();
 
 function onClick(value: number) {
-  emit("update:modelValue", value);
-  PageCountValue.value = "";
+  if (PageCountValue.value > pageShowValue.value) {
+    emit("update:modelValue", value);
+    PageCountValue.value = "";
+  } else {
+    alert("전체 페이지 수가 페이지네이션 길이보다 짧습니다.");
+    PageCountValue.value = "";
+  }
 }
 </script>
 

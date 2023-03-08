@@ -26,7 +26,7 @@ function onClick(value: number) {
     emits("update:modelValue", value);
     InputPageValue.value = "";
   } else {
-    alert("NOPE!! APagesToShow Component!!");
+    alert("페이지네이션 길이가 전체 페이지 수 보다 깁니다.");
     InputPageValue.value = "";
   }
 }

@@ -30,23 +30,19 @@
 import InputNumber from "./InputNumber.vue";
 import { ref, toRefs, computed, watch, onMounted } from "vue";
 const currentPage = ref<number>(1); //현재 페이지 번호 추적
-const pageCount = ref<number>(20); //전체 페이지 수
-const pagesToShow = ref<number>(8); //페이지네이션 길이
+// const pageCount = ref<number>(20); //전체 페이지 수
+// const pagesToShow = ref<number>(8); //페이지네이션 길이
 
 const props = withDefaults(
   defineProps<{
     modelValue: number; //현재 페이지 번호를 받아올 prop
-    pageShowValue: number;
-    pageCountValue: number;
+    pagesToShow?: number;
+    pageCount: number;
   }>(),
-  { pageShowValue: 20 }
+  { pageShowValue: 11 }
 );
 
-const { modelValue, pageShowValue, pageCountValue } = toRefs(props);
-
-watch((pageShowValue) => {
-  console.log("pageShowValue", pageShowValue.value);
-});
+const { modelValue, pagesToShow, pageCount } = toRefs(props);
 
 const emits = defineEmits<{
   (e: "update:currentPage", value: number): void; // 현재 페이지 번호 업데이트 emit
@@ -63,6 +59,15 @@ const visiblePage = computed(() => {
   let numberAverage: number = Math.ceil(pagesToShow.value / 2); // 페이지네이션 길이의 반을 올림 // 4
 
   // console.log("pages.length", pages.length);
+
+  // if (currentPage.value <= pagesToShow.value - 2) {
+  //   for(let i=0;i<pagesToShow.value - 2; i++) {
+  //     pages.push(i+1)
+  //   }
+  //   pages.push('...', pageCount.value.toString())
+  // } else if() {
+
+  // }
 
   // 시작 페이지가 1 이하일 때
   if (startPage <= numberAverage) {
@@ -101,6 +106,7 @@ const visiblePage = computed(() => {
   } else if (endPage >= pageCount.value) {
     pages.push(pageCount.value);
   }
+  console.log("pages.length", pages.length);
 
   return pages;
 });
@@ -116,12 +122,12 @@ watch(modelValue, () => {
   currentPage.value = modelValue.value;
 });
 
-watch(pageShowValue, () => {
-  pagesToShow.value = pageShowValue.value;
-});
-watch(pageCountValue, () => {
-  pageCount.value = pageCountValue.value;
-});
+// watch(pagesToShow, () => {
+//   pagesToShow.value = pageShowValue.value;
+// });
+// watch(pageCountValue, () => {
+//   pageCount.value = pageCountValue.value;
+// });
 
 function gotoPage(pageNumber: number): void {
   updateValue(pageNumber);

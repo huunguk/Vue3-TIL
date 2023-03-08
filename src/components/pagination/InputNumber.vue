@@ -30,7 +30,7 @@ function onClick(value: number) {
     emits("update:modelValue", value);
     ChangeNumber.value = "";
   } else {
-    alert("nope! InputNumber Component");
+    alert("해당 페이지 번호가 없습니다.");
     ChangeNumber.value = "";
   }
 }
